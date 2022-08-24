@@ -15,8 +15,8 @@ SingleBlogScreen(this.blogsResponse,this.index);
     return Scaffold(
       body: Column(
         children: [
-          Image.asset(
-            'assets/images/Rectangle 15.png',
+          Image.network(
+            'https://lavie.orangedigitalcenteregypt.com${ blogsResponse.data!.plants![index].imageUrl}',
             height: height * .33,
             width: width,
             fit: BoxFit.cover,

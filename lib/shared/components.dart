@@ -33,13 +33,21 @@ Widget defaultTextFormField({
   required TextEditingController controller,
   IconData ?prefix,
   String ?label,
- 
+  Function? onTap,
+  Function? onChange,
 }) {
   return Container(
     width: width,
     height: height,
     alignment: Alignment.center,
+
     child: TextFormField(
+      onTap: (){
+      onTap!();
+      },
+      onChanged: (value){
+        onChange!(value);
+      },
      textAlign: TextAlign.left,
      textAlignVertical: TextAlignVertical.bottom,
       controller: controller,
@@ -134,7 +142,7 @@ Widget buildMarketItem({
      Container(
                   
                     width: width *.43,
-                    height: height *.4,
+                    height: height *.5,
                     child: Material(
                       
                       elevation: 20,
@@ -152,7 +160,7 @@ Widget buildMarketItem({
                             Row(
                               children: [
                                 Expanded(
-                                  child: Image.asset(
+                                  child: Image.network(
                                     imagePath,
                                     width: width * .1,
                                     height: height * .1,

@@ -16,7 +16,10 @@ class ShortNameState extends AuthenticationStates{}
 class InvalidEmailState extends AuthenticationStates{}
 
 class WeakPasswordState extends AuthenticationStates{}
+class StrongPasswordState extends AuthenticationStates{}
 
 class SignupSuccessfullyState extends AuthenticationStates{}
 
 class ConfirmedPassword extends AuthenticationStates{}
+class ValidEmail extends AuthenticationStates{}
+

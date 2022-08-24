@@ -11,24 +11,17 @@ import 'package:la_via_app/models/plants_response.dart';
 import 'package:la_via_app/models/product.dart';
 import 'package:la_via_app/modules/cart_screen.dart';
 import 'package:la_via_app/modules/course_exam.dart';
+import 'package:la_via_app/modules/search_screen.dart';
 import 'package:la_via_app/shared/components.dart';
 import 'package:la_via_app/shared/constants.dart';
 import 'package:la_via_app/shared/preferences.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class HomeScreen extends StatefulWidget {
-  bool quizVisible ;
-  HomeScreen(this.quizVisible);
-  @override
-  State<HomeScreen> createState() => _HomeScreenState(this.quizVisible);
- 
-
-}
-
-class _HomeScreenState extends State<HomeScreen> {
+class HomeScreen extends StatelessWidget {
+  
   
  bool quizVisible;
- _HomeScreenState(this.quizVisible);
+ HomeScreen(this.quizVisible);
 
   int dayDate = DateTime.now().day;
 
@@ -42,14 +35,7 @@ class _HomeScreenState extends State<HomeScreen> {
     return quizVisible;
   }
 
-  @override
-  void initState() {
-    super.initState();
-  //         HomeCubit.get(context).gettAll();
-  //         HomeCubit.get(context).getPlants();
-  //         HomeCubit.get(context).getSeeds();
-  //         HomeCubit.get(context).getTools();
-   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -59,18 +45,15 @@ class _HomeScreenState extends State<HomeScreen> {
     var searchController = TextEditingController();
 
     return BlocProvider(
-      create: (BuildContext context) => HomeCubit(),
+      create: (BuildContext context) => HomeCubit()..gettAll()..getPlants()..getSeeds()..getTools(),
       child: BlocConsumer<HomeCubit, HomeStates>(
         listener: (context, state) {},
         builder: (context, state) {
           HomeCubit cubit = HomeCubit.get(context);
-          cubit.gettAll();
-          cubit.getPlants();
-          cubit.getSeeds();
-          cubit.getTools();
-  
+            
           return Scaffold(
-            body: Padding(
+            
+            body:cubit.getProducts||cubit.getAllSeeds  || cubit.getAllPlants || cubit.getAllTools? Center(child: CircularProgressIndicator(color: Theme.of(context).primaryColor)) :Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 20),
                 child: SingleChildScrollView(
                     child: Column(
@@ -118,10 +101,14 @@ class _HomeScreenState extends State<HomeScreen> {
                           Container(
                               child: defaultTextFormField(
                             controller: searchController,
-                            label: 'Search',
+                            label: '   Search',
                             prefix: Icons.search,
                             height: height * .05,
                             width: width * .7,
+                            onTap: (){
+                                cubit.searchForItems(cubit.toolsResponse.data![0].seedId);
+                            //  Navigator.push(context,MaterialPageRoute(builder: (context)=>SearchScreen()));
+                            }
                           )),
                           SizedBox(
                             width: width * .03,
@@ -174,9 +161,10 @@ class _HomeScreenState extends State<HomeScreen> {
                                 child: TabBarView(
                                     physics: NeverScrollableScrollPhysics(),
                                     children: <Widget>[
-                                      GridView.count(
+                                     ( cubit.getProducts)?Center(child: CircularProgressIndicator(color: Theme.of(context).primaryColor),
+                                      ):GridView.count(
                                         crossAxisSpacing: width * .04,
-                                        mainAxisSpacing: height * .08,
+                                        mainAxisSpacing: height * .04,
                                         crossAxisCount: 2,
                                         scrollDirection: Axis.vertical,
                                         shrinkWrap: true,
@@ -204,11 +192,13 @@ class _HomeScreenState extends State<HomeScreen> {
                                             onPressButton: () {
                                               // boughtItems.add(allPlantsResponse.data![index]);
                                             },
-                                            imagePath:
-                                                'assets/images/Lovepik_com-401306819-plant-pot.png',
+                                            imagePath:'https://lavie.orangedigitalcenteregypt.com${cubit.allPlantsResponse
+                                                .data![index].imageUrl}'
+                                               // 'https://lavie.orangedigitalcenteregypt.com/uploads/09be504b-99e3-481d-9653-9b6c791741dc.png',
                                           );
                                         }),
-                                      ),
+                                      ),   ( cubit.getAllPlants)?Center(child: CircularProgressIndicator(color: Theme.of(context).primaryColor),
+                                      ):
                                       GridView.count(
                                         crossAxisSpacing: width * .04,
                                         mainAxisSpacing: height * .08,
@@ -241,10 +231,12 @@ class _HomeScreenState extends State<HomeScreen> {
                                                   .plantsResponse.data![index]);
                                             },
                                             imagePath:
-                                                'assets/images/Lovepik_com-401306819-plant-pot.png',
+                                                'https://lavie.orangedigitalcenteregypt.com${cubit.plantsResponse
+                                                .data![index].imageUrl}',
                                           );
                                         }),
-                                      ),
+                                      ),  ( cubit.getAllSeeds)?Center(child: CircularProgressIndicator(color: Theme.of(context).primaryColor),
+                                      ):
                                       GridView.count(
                                         crossAxisSpacing: width * .04,
                                         mainAxisSpacing: height * .08,
@@ -279,10 +271,13 @@ class _HomeScreenState extends State<HomeScreen> {
                                                   .seedsResponse.data![index]);
                                             },
                                             imagePath:
-                                                'assets/images/Lovepik_com-401306819-plant-pot.png',
+                                               'https://lavie.orangedigitalcenteregypt.com${cubit.seedsResponse
+                                                .data![index].imageUrl}',
                                           );
                                         }),
                                       ),
+                                      ( cubit.getAllTools)?Center(child: CircularProgressIndicator(color: Theme.of(context).primaryColor),
+                                      ):
                                       GridView.count(
                                         crossAxisSpacing: width * .04,
                                         mainAxisSpacing: height * .08,
@@ -318,7 +313,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                             },
                                             imagePath:
                                                 
-                                            'assets/images/Lovepik_com-401306819-plant-pot.png',
+                                            'https://lavie.orangedigitalcenteregypt.com${cubit.plantsResponse
+                                                .data![index].imageUrl}',
                                           );
                                         }),
                                       ),

@@ -19,6 +19,7 @@ class AuthenticationsCubit extends Cubit<AuthenticationStates> {
   var firstNameController = TextEditingController();
   var secondNameController = TextEditingController();
 
+
   bool firstNameFlag = false;
   bool secondNameFlag = false;
   bool emailFlag = false;
@@ -61,6 +62,12 @@ class AuthenticationsCubit extends Cubit<AuthenticationStates> {
     emit(LoginSuccessfullyState());
   }
 
+void signupSuccessfully(){
+ 
+emit( SignupSuccessfullyState());
+}
+ 
+
   void signUp() async {
     try {
       var response = await Dio().post(
@@ -68,15 +75,35 @@ class AuthenticationsCubit extends Cubit<AuthenticationStates> {
           data: {
             "firstName": "${firstNameController.text}",
             "lastName": "${secondNameController.text}",
-            "email": "${emailController.text}",
-            "password": "${passwordController.text}"
+            "email": "${signupEmailController.text}",
+            "password": "${signupConfirmPasswordController.text}"
           });
       print(response);
       checkAllVlidation();
+      if (response.data['type'] == 'Success') {
+        signupSuccessfully();
+      }
     } on DioError catch (e) {
-      checkAllVlidation();
+     checkAllVlidation();
+
       print(e.response);
-      print(e.response!.data['message'][0]);
+    if(e.response!.data['message'][0]=='email must be an email') {
+      emailMessage='email must be an email';
+      emailFlag=true;
+    }else{
+      emailMessage='';
+      emailFlag=false;
+      emit(ValidEmail());
+    }
+    if(e.response!.data['message'][0]=='password too weak (not meeting regex)') {
+      passwordMessage='password too weak (not meeting regex)';
+      passwordFlag=true;
+      emit(WeakPasswordState());
+    }else{
+      passwordMessage='';
+      emit(StrongPasswordState());
+    }
+    
     }
   }
 
@@ -134,19 +161,36 @@ class AuthenticationsCubit extends Cubit<AuthenticationStates> {
     } else {
       raiseShortConfirmPasswordFlag(false);
     }
-
-    if (emailController.text.length < 3) {
+     if (signupEmailController.text.length < 5) {
       raiseEmailFlag(true);
+    } else {
+      raiseEmailFlag(false);
     }
+
     checkPasswordSimilarity();
+
+   
   }
+
+void checkEmailValidation(DioError e){
+  print('d5alt');
+
+ for(int i in e.response!.data['message']){
+      if(e.response!.data['message'][i]=='email must be an email'){
+          raiseEmailFlag(true);
+      }else{
+          raiseEmailFlag(false);
+      }
+    }
+    emit(ValidEmail());
+}
 
   void checkPasswordSimilarity() {
     if (signupPasswordController.text == signupConfirmPasswordController.text) {
       samePassword = true;
     } else {
       ConfirmPasswordMessage = 'Not the same Password';
-      
+      samePassword=false;
     }
     emit(ConfirmedPassword());
   }

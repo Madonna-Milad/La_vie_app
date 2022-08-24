@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:la_via_app/cubit/layout_cubit/layout_states.dart';
+import 'package:la_via_app/modules/discussion_forums_screen.dart';
 
 import '../../modules/Profile_screen.dart';
 import '../../modules/blogs_screen.dart';
@@ -16,7 +17,7 @@ static LayoutCubit get(context)=>BlocProvider.of(context);
 
 int currentIndex=2;
 List<Widget>screens=[
-   BlogsScreen(),
+   DiscussionForumScreen(),
     ScanScreen(),
     HomeScreen(true),
     NotificationsScreen(),

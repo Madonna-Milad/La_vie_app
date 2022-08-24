@@ -64,6 +64,13 @@ class LoginScreen extends StatelessWidget {
                             MaterialPageRoute(
                                 builder: (context) => LayoutScreen()));
                       }
+
+                      if(state is SignupSuccessfullyState){
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => LoginScreen()));
+                      }
                     },
                     builder: (context, state) {
                       AuthenticationsCubit cubit =
@@ -158,12 +165,9 @@ class LoginScreen extends StatelessWidget {
                                     label: 'Sign up',
                                     onPressed: () {
                                       cubit.signUp();
-                                      // Navigator.push(
-                                      //     context,
-                                      //     MaterialPageRoute(
-                                      //         builder: (context) =>
-                                      //             LoginScreen()));
+                                      
                                     }),
+                                 
                                 SizedBox(height: height * .01),
                                 Row(
                                   mainAxisAlignment: MainAxisAlignment.center,

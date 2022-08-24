@@ -14,20 +14,14 @@ import '../models/forums_respose.dart';
 import '../shared/preferences.dart';
 
 class DiscussionForumScreen extends StatelessWidget {
- 
   var searchController = TextEditingController();
- 
+
   @override
   Widget build(BuildContext context) {
     double width = MediaQuery.of(context).size.width;
     double height = MediaQuery.of(context).size.height;
     return Scaffold(
         appBar: AppBar(
-          leading: IconButton(
-            onPressed: () {},
-            icon: Icon(Icons.arrow_back_ios),
-            color: Colors.black,
-          ),
           title: Text(
             'Discussion Forums',
             style: TextStyle(
@@ -41,11 +35,11 @@ class DiscussionForumScreen extends StatelessWidget {
             child: Column(
               children: [
                 defaultTextFormField(
-                    controller: searchController,
-                    label: 'Search',
-                    prefix: Icons.search,
-                    height: height * .07,
-                    ),
+                  controller: searchController,
+                  label: 'Search',
+                  prefix: Icons.search,
+                  height: height * .07,
+                ),
                 SizedBox(
                   height: height * .02,
                 ),
@@ -57,7 +51,6 @@ class DiscussionForumScreen extends StatelessWidget {
                       children: <Widget>[
                         Container(
                           child: TabBar(
-                            
                             labelColor: Theme.of(context).primaryColor,
                             unselectedLabelColor: Colors.grey,
                             indicatorColor: Theme.of(context).primaryColor,
@@ -68,53 +61,88 @@ class DiscussionForumScreen extends StatelessWidget {
                           ),
                         ),
                         BlocProvider(
-      create: (BuildContext context) =>ForumsCubit(),
-      child: BlocConsumer<ForumsCubit,ForumsStates>(
-        listener: (context, state) {},
-        builder: (context,state){
-          ForumsCubit cubit =ForumsCubit.get(context);
-         cubit.getAllForums();
-    cubit.getMyForums();
-          return Container(
-                            height: height,
-                           
-                                child: TabBarView(
-                                  physics:  NeverScrollableScrollPhysics(),
-                                  children: <Widget>[
-                                  ListView.separated(
-                                     physics: NeverScrollableScrollPhysics(),
-                                      scrollDirection: Axis.vertical,
-                                      shrinkWrap: true,
-                                      itemBuilder: ((context, index) => createForum(
-                                          width,
-                                          height,
-                                          context,
-                                         cubit.formusResponse,
-                                          index,cubit)),
-                                      separatorBuilder: ((context, index) =>
-                                          SizedBox(
-                                            height: height * .02,
-                                          )),
-                                      itemCount: cubit.formusResponse.data!.length
-                                      ),
-                                  ListView.separated(
-                                      physics: NeverScrollableScrollPhysics(),
-                                      scrollDirection: Axis.vertical,
-                                      shrinkWrap: true,
-                                      itemBuilder: ((context, index) => createForum(
-                                          width,
-                                          height,
-                                          context,
-                                          cubit.myFormusResponse,
-                                          index,cubit)),
-                                      separatorBuilder: ((context, index) =>
-                                          SizedBox(
-                                            height: height * .02,
-                                          )),
-                                      itemCount: cubit.myFormusResponse.data!.length),
-                                ]),
-                              );}))
-                          
+                            create: (BuildContext context) => ForumsCubit()
+                              ..getAllForums()
+                              ..getMyForums(),
+                            child: BlocConsumer<ForumsCubit, ForumsStates>(
+                                listener: (context, state) {},
+                                builder: (context, state) {
+                                  ForumsCubit cubit = ForumsCubit.get(context);
+
+                                  return cubit.gettingAllForums ||
+                                          cubit.gettingMyForums
+                                      ? Center(
+                                          child: CircularProgressIndicator(
+                                              color: Theme.of(context)
+                                                  .primaryColor))
+                                      : Container(
+                                          height: height,
+                                          child: TabBarView(
+                                              physics:
+                                                  NeverScrollableScrollPhysics(),
+                                              children: <Widget>[
+                                                ListView.separated(
+                                                    physics:
+                                                        NeverScrollableScrollPhysics(),
+                                                    scrollDirection:
+                                                        Axis.vertical,
+                                                    shrinkWrap: true,
+                                                    itemBuilder: ((context,
+                                                            index) =>
+                                                        createForum(
+                                                            width,
+                                                            height,
+                                                            context,
+                                                            cubit
+                                                                .formusResponse,
+                                                            index,
+                                                            cubit)),
+                                                    separatorBuilder: ((context,
+                                                            index) =>
+                                                        SizedBox(
+                                                          height: height * .02,
+                                                        )),
+                                                    itemCount: cubit
+                                                        .formusResponse
+                                                        .data!
+                                                        .length),
+                                                cubit.gettingAllForums ||
+                                                        cubit.gettingMyForums
+                                                    ? Center(
+                                                        child: CircularProgressIndicator(
+                                                            color: Theme.of(
+                                                                    context)
+                                                                .primaryColor))
+                                                    : ListView.separated(
+                                                        physics:
+                                                            NeverScrollableScrollPhysics(),
+                                                        scrollDirection:
+                                                            Axis.vertical,
+                                                        shrinkWrap: true,
+                                                        itemBuilder: ((context,
+                                                                index) =>
+                                                            createForum(
+                                                                width,
+                                                                height,
+                                                                context,
+                                                                cubit
+                                                                    .myFormusResponse,
+                                                                index,
+                                                                cubit)),
+                                                        separatorBuilder:
+                                                            ((context, index) =>
+                                                                SizedBox(
+                                                                  height:
+                                                                      height *
+                                                                          .02,
+                                                                )),
+                                                        itemCount: cubit
+                                                            .myFormusResponse
+                                                            .data!
+                                                            .length),
+                                              ]),
+                                        );
+                                }))
                       ]),
                 ),
                 SizedBox(
@@ -131,12 +159,11 @@ class DiscussionForumScreen extends StatelessWidget {
           },
           backgroundColor: Theme.of(context).primaryColor,
           child: const Icon(Icons.add),
-        )
-        );
+        ));
   }
 
   Widget createForum(double width, double height, BuildContext context,
-      Forums forumsResponse, int index,ForumsCubit cubit) {
+      Forums forumsResponse, int index, ForumsCubit cubit) {
     return Column(
       children: [
         Container(
@@ -202,8 +229,8 @@ class DiscussionForumScreen extends StatelessWidget {
               Container(
                 decoration: BoxDecoration(
                   image: DecorationImage(
-                    image: AssetImage(
-                      'assets/images/pexels-scott-webb-213727 1.png',
+                    image: NetworkImage(
+                      'https://lavie.orangedigitalcenteregypt.com${forumsResponse.data![index].imageUrl}',
                     ),
                     fit: BoxFit.fill,
                   ),
@@ -225,9 +252,8 @@ class DiscussionForumScreen extends StatelessWidget {
                 color: cubit.likePressed ? Colors.blue : Colors.grey,
               ),
               onTap: () {
-              cubit.toggleLikeButton();
-              cubit.increamentLikesNumber(index);  
-              
+                cubit.toggleLikeButton();
+                cubit.increamentLikesNumber(index);
               },
             ),
             Text(
@@ -244,7 +270,6 @@ class DiscussionForumScreen extends StatelessWidget {
             ),
           ],
         )
-        
       ],
     );
   }

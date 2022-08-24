@@ -9,6 +9,8 @@ class CartCubit extends Cubit<CartStates> {
 
   static CartCubit get(context) => BlocProvider.of(context);
 
+  
+
   double totalPrice = 0;
 
   void increamentCounter(int index) {

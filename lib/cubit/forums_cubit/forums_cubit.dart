@@ -11,6 +11,10 @@ class ForumsCubit extends Cubit<ForumsStates>{
 
 
   static ForumsCubit get(context) => BlocProvider.of(context);
+
+  bool gettingAllForums=false;
+  bool gettingMyForums =false;
+
  bool likePressed = false;
  Forums formusResponse = new Forums();
    Forums myFormusResponse = new Forums();
@@ -28,6 +32,7 @@ emit(ChangelikesNumber());
 
 
  void getAllForums() async {
+  gettingAllForums=true;
     Dio()
         .get(
       'https://lavie.orangedigitalcenteregypt.com/api/v1/forums',
@@ -37,11 +42,13 @@ emit(ChangelikesNumber());
       }),
     )
         .then((response) {
-      print(response);
+    //  print(response);
       print('--------------------');
       formusResponse = Forums.fromJson(response.data);
-      print(formusResponse.data![0].title);
-      print(formusResponse.data!.length);
+//print(formusResponse.data);
+     gettingAllForums=false;
+     emit(GettingAllForumsState());
+
     }).catchError((error) {
       if (error is DioError) {
         print(error.response);
@@ -50,6 +57,7 @@ emit(ChangelikesNumber());
   }
 
    void getMyForums() async {
+    gettingMyForums=true;
     Dio()
         .get(
       'https://lavie.orangedigitalcenteregypt.com/api/v1/forums/me',
@@ -60,10 +68,11 @@ emit(ChangelikesNumber());
     )
         .then((response) {
       print(response);
-      print('--------------------');
+      print('*******************');
       myFormusResponse = Forums.fromJson(response.data);
-      print(myFormusResponse.data![0].title);
-      print(myFormusResponse.data!.length);
+print(myFormusResponse.data);
+    gettingMyForums=false;
+    emit(GettingMyForumsState());
     }).catchError((error) {
       if (error is DioError) {
         print(error.response);

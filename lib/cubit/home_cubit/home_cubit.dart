@@ -12,6 +12,13 @@ class HomeCubit extends Cubit<HomeStates> {
   HomeCubit() : super(initialState());
 
   static HomeCubit get(context) => BlocProvider.of(context);
+ bool getProducts=false;
+  bool getAllPlants=false;
+   bool getAllSeeds=false;
+    bool getAllTools=false;
+
+
+List <SeedsResponse> search=[];
   Product allPlantsResponse = Product();
   SeedsResponse seedsResponse = SeedsResponse();
   SeedsResponse toolsResponse = SeedsResponse();
@@ -28,6 +35,9 @@ class HomeCubit extends Cubit<HomeStates> {
   }
 
   void gettAll() async {
+    getProducts=true;
+ 
+    emit(LoadingState());
     Dio()
         .get(
       'https://lavie.orangedigitalcenteregypt.com/api/v1/products',
@@ -37,11 +47,14 @@ class HomeCubit extends Cubit<HomeStates> {
       }),
     )
         .then((response) {
-      print(response);
-      print('--------------------');
+      // print(response);
+      // print('--------------------');
+      //search=response.data[]
       allPlantsResponse = new Product.fromJson(response.data);
-     // emit(getAllProductsState());
-      //print(seedsResponse.data![0].);
+
+      getProducts=false;
+      emit(getAllProductsState());
+     
     }).catchError((error) {
       if (error is DioError) {
         print(error.response);
@@ -50,6 +63,9 @@ class HomeCubit extends Cubit<HomeStates> {
   }
 
   void getSeeds() async {
+   
+   bool getAllSeeds=true;
+  
     Dio()
         .get(
       'https://lavie.orangedigitalcenteregypt.com/api/v1/seeds',
@@ -62,8 +78,9 @@ class HomeCubit extends Cubit<HomeStates> {
       print(response);
       print('--------------------');
       seedsResponse = new SeedsResponse.fromJson(response.data);
-    //  emit(getSeedsState());
-      //print(seedsResponse.data![0].);
+      getAllSeeds=false;
+      emit(getSeedsState());
+     
     }).catchError((error) {
       if (error is DioError) {
         print(error.response);
@@ -72,6 +89,7 @@ class HomeCubit extends Cubit<HomeStates> {
   }
 
   void getPlants() async {
+     getAllPlants=true;
     Dio()
         .get(
       'https://lavie.orangedigitalcenteregypt.com/api/v1/plants',
@@ -84,7 +102,8 @@ class HomeCubit extends Cubit<HomeStates> {
       print(response);
       print('--------------------');
       plantsResponse = new SeedsResponse.fromJson(response.data);
-     // emit(getPlantsState());
+      getAllPlants=false;
+      emit(getPlantsState());
       //print(seedsResponse.data![0].);
     }).catchError((error) {
       if (error is DioError) {
@@ -94,6 +113,7 @@ class HomeCubit extends Cubit<HomeStates> {
   }
 
   void getTools() async {
+    bool getAllTools=true;
     Dio()
         .get(
       'https://lavie.orangedigitalcenteregypt.com/api/v1/tools',
@@ -106,8 +126,36 @@ class HomeCubit extends Cubit<HomeStates> {
       print(response);
       print('--------------------');
       toolsResponse = new SeedsResponse.fromJson(response.data);
-     // emit(getToolsState());
+      getAllTools=false;
+      emit(getToolsState());
       //print(seedsResponse.data![0].);
+    }).catchError((error) {
+      if (error is DioError) {
+        print(error.response);
+      }
+    });
+  }
+
+
+  void searchForItems(String? id){
+    emit(LoadingSearchState());
+
+    Dio()
+        .get(
+      'https://lavie.orangedigitalcenteregypt.com/api/v1/tools/:${id}',
+      options: Options(headers: {
+        'Authorization':
+            'Bearer ${PreferenceUtils.getString(SharedKeys.apiToken)}'
+      }),
+    )
+        .then((response) {
+      // print(response);
+      // print('--------------------');
+      toolsResponse = new SeedsResponse.fromJson(response.data);
+      getAllTools=false;
+      emit(getToolsState());
+      search=toolsResponse.data! as List<SeedsResponse>;
+      print(search[0]);
     }).catchError((error) {
       if (error is DioError) {
         print(error.response);

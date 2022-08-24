@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:la_via_app/cubit/cart_cubit/cart_states.dart';
 import 'package:la_via_app/cubit/cart_cubit/cart_cubit.dart';
+import 'package:la_via_app/layout/layout_screen.dart';
 import 'package:la_via_app/shared/components.dart';
 import 'package:la_via_app/shared/constants.dart';
 
@@ -32,7 +33,7 @@ class CartScreen extends StatelessWidget {
                 color: Colors.black,
               ),
               onPressed: () {
-                Navigator.pop(context);
+                Navigator.push(context,MaterialPageRoute(builder: ((context)=>LayoutScreen())));
               },
             ),
             centerTitle: true,
